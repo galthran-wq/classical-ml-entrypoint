@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class BaseTransformPipeline:
-    def __init__(self, *args, cat_vars: List[str], num_vars = List[str], **kwargs) -> None:
+    def __init__(self, *args, cat_vars: List[str], num_vars: List[str], text_vars: List[str] = [], **kwargs) -> None:
         self.enc_pipeline = ColumnTransformer([
             ("num", self.get_num_pipeline(), num_vars),
             ("cat", self.get_cat_pipeline(), cat_vars),
@@ -37,10 +37,10 @@ class BaseTransformPipeline:
 
 
 class TextTransformPipeline(BaseTransformPipeline):
-    def __init__(self, text_cols: List[str], *args, **kwargs) -> None:
+    def __init__(self, *args, text_vars: List[str] = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.enc_pipeline.transformers.append(
-            ("text", self.get_text_pipeline(), text_cols[0])
+            ("text", self.get_text_pipeline(), text_vars[0])
         )
 
     def get_text_pipeline(self):
