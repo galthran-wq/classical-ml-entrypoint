@@ -36,8 +36,7 @@ class Pipeline:
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         X, y = self.loader.get_data()
-        transformer = self.transformer.get_transformer()
-        pipeline = make_pipeline(transformer, self.model)
+        pipeline = self.get_pipeline()
         results = cross_validate(
             pipeline, 
             X, y, 
@@ -48,6 +47,12 @@ class Pipeline:
             }
         )
         results = self.get_cv_metrics(results)
+    
+    def get_pipeline(self):
+        transformer = self.transformer.get_pipeline()
+        model = self.model.get_pipeline()
+        pipeline = make_pipeline(transformer, model)
+        return pipeline
 
     def get_cv_metrics(self, cv_results):
         return {
