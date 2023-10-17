@@ -10,17 +10,17 @@ from .data import (
 )
 from .model import BaseModel
 from .grid import BaseGrid, GridInstance
+from .logger import BaseLogger
 
 
 class Pipeline:
     def __init__(
         self,
-        project: str,
-        name: str,
         scoring: List[str],
         loader: BaseLoader,
         transformer: BaseTransformPipeline,
         grid: BaseGrid,
+        logger: BaseLogger,
         model: BaseModel = None,
         cv: int = 5,
     ) -> None:
@@ -30,18 +30,14 @@ class Pipeline:
         self.cv = cv
         self.scoring = scoring
         self.grid = grid
-
-        self.project = project
-        self.name = name
+        self.logger = logger
 
         if model is None:
             self.model = BaseModel()
 
-        wandb.login()
-        wandb.init(project=project, name=name)
-
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         instance: GridInstance = self.grid.get_instance()
+        self.logger.on_run_start()
 
         X, y = self.loader.get_data()
         pipeline = self.get_pipeline()
@@ -55,6 +51,7 @@ class Pipeline:
             }
         )
         results = self.get_cv_metrics(results)
+        self.logger.on_run_end(results)
     
     def get_pipeline(self):
         transformer = self.transformer.get_pipeline()
