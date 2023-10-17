@@ -9,6 +9,7 @@ from .data import (
     BaseLoader, BaseTransformPipeline
 )
 from .model import BaseModel
+from .grid import BaseGrid, GridInstance
 
 
 class Pipeline:
@@ -19,7 +20,8 @@ class Pipeline:
         scoring: List[str],
         loader: BaseLoader,
         transformer: BaseTransformPipeline,
-        model: BaseModel,
+        grid: BaseGrid,
+        model: BaseModel = None,
         cv: int = 5,
     ) -> None:
         self.loader = loader
@@ -27,14 +29,20 @@ class Pipeline:
         self.model = model
         self.cv = cv
         self.scoring = scoring
+        self.grid = grid
 
         self.project = project
         self.name = name
+
+        if model is None:
+            self.model = BaseModel()
 
         wandb.login()
         wandb.init(project=project, name=name)
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
+        instance: GridInstance = self.grid.get_instance()
+
         X, y = self.loader.get_data()
         pipeline = self.get_pipeline()
         results = cross_validate(
@@ -58,25 +66,4 @@ class Pipeline:
         return {
             f"cv_{k}": np.mean(cv_results[f"test_{k}"])
             for k in self.scoring
-        }
-
-    def get_sweep_config(
-        self,
-    ):
-        return {
-            "method": "random", # try grid or random
-            "metric": {
-                "name": "accuracy",
-                "goal": "maximize"   
-            },
-            "parameters": {
-                **{
-                    f"model/{k}": v
-                    for k, v in self.model.items()
-                },
-                **{
-                    f"data/{k}": v
-                    for k, v in self.transformer.items()
-                },
-            }
         }
