@@ -6,7 +6,7 @@ from .pipeline import Pipeline
 
 ArgsType = Optional[Union[List[str], Dict[str, Any], Namespace]]
 
-class AugmenterCLI:
+class CLI:
     def __init__(
         self,
     ) -> None:
