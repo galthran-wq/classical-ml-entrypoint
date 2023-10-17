@@ -14,12 +14,13 @@ class BaseLogger:
     def on_run_start(self, instance: GridInstance):
         pass
 
-    def on_run_end(metrics: Dict[str, float]):
+    def on_run_end(self, metrics: Dict[str, float]):
         pass
 
 
 class WandbLogger(BaseLogger):
-    def __init__(self, project, name):
+    def __init__(self, project: str, name: str):
+        super().__init__()
         wandb.login()
         self.project = project
         self.name = name
@@ -27,6 +28,6 @@ class WandbLogger(BaseLogger):
     def on_run_start(self, instance: GridInstance):
         wandb.init(project=self.project, name=self.name, config=instance.to_plain_dict())
     
-    def on_run_end(metrics: Dict[str, float]):
+    def on_run_end(self, metrics: Dict[str, float]):
         wandb.log(metrics)
         wandb.finish(0)

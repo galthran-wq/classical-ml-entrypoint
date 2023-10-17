@@ -23,11 +23,13 @@ class Pipeline:
         logger: BaseLogger,
         model: BaseModel = None,
         cv: int = 5,
+        n_iter = 100,
     ) -> None:
         self.loader = loader
         self.transformer = transformer
         self.model = model
         self.cv = cv
+        self.n_iter = n_iter
         self.scoring = scoring
         self.grid = grid
         self.logger = logger
@@ -35,9 +37,9 @@ class Pipeline:
         if model is None:
             self.model = BaseModel()
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    def run_iter(self, *args: Any, **kwds: Any) -> Any:
         instance: GridInstance = self.grid.get_instance()
-        self.logger.on_run_start()
+        self.logger.on_run_start(instance)
 
         X, y = self.loader.get_data()
         pipeline = self.get_pipeline(instance)
@@ -52,6 +54,10 @@ class Pipeline:
         )
         results = self.get_cv_metrics(results)
         self.logger.on_run_end(results)
+    
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        for i in range(self.n_iter):
+            self.run_iter()
     
     def get_pipeline(self, instance):
         self.transformer.set_params_from_grid_instance(instance)

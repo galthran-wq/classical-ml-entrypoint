@@ -1,4 +1,5 @@
 NUM_KEY = "num"
 ORD_KEY = "ord"
 CAT_KEY = "cat"
+FE_KEY = "fe"
 MODEL_KEY = "model"

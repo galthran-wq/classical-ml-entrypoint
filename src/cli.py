@@ -15,7 +15,7 @@ class CLI:
         self.add_core_arguments_to_parser(self.parser)
         self.parse_arguments(self.parser)
         self.instantiate_classes()
-        self.pipeline.run()
+        self.pipeline()
 
     def _setup_parser_kwargs(self, parser_kwargs: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         subcommand_names = self.subcommands().keys()
