@@ -2,3 +2,5 @@ pandas~=2.0.3
 fire
 scikit-learn
 matplotlib~=3
+jsonargparse
+wandb~=0.15

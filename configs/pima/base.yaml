@@ -1,0 +1,33 @@
+scoring:
+- accuracy
+- f1
+- roc_auc
+loader: 
+  class_path: src.data.loader.BaseLoader
+  init_args:
+    label_col: output
+    data_path: ./data/osda_bhw/heart/heart.csv
+transformer: 
+  class_path: src.data.transformer.BaseTransformPipeline
+  init_args:
+    cat_vars: 
+    - sex
+    - cp
+    - exng 
+    - caa
+    - fbs
+    - restecg
+    num_vars:
+    - trtbps
+    - chol
+    - thalachh 
+    - oldpeak
+grid: 
+  class_path: src.grid.DefaultGrid
+logger: 
+  class_path: src.logger.WandbLogger
+  init_args:
+    project: test
+    name: fit
+cv: 5
+n_iter: 100

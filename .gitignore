@@ -1,3 +1,6 @@
 venv
 eda
 __pycache__
+cache
+.vscode
+wandb

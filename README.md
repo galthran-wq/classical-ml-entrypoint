@@ -15,18 +15,10 @@ rm pima-indians-diabetes-database.zip
 2. Run
 
 ```sh
-python main.py \
-    --data_path ./heart.csv  \
-    --label_col output --cat_vars [sex,cp,exan,ca,cap,fbs,rest_ech] \
-    --num_vars [trtbps,chol,thalachh] \
-    --output_path ./cache/heart_gs.pkl
+python driver.py --config ./configs/pima/base.yaml
 ```
 
 
 ## TODO
 
-1. Flexible parameters
-    - jsonargparse cli with run configs
-2. feature engineering capabilities in data
-3. visualizers and quick summaries
-4. logging callbacks
+1. feature engineering capabilities in data
