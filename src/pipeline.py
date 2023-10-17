@@ -40,7 +40,7 @@ class Pipeline:
         self.logger.on_run_start()
 
         X, y = self.loader.get_data()
-        pipeline = self.get_pipeline()
+        pipeline = self.get_pipeline(instance)
         results = cross_validate(
             pipeline, 
             X, y, 
@@ -53,7 +53,9 @@ class Pipeline:
         results = self.get_cv_metrics(results)
         self.logger.on_run_end(results)
     
-    def get_pipeline(self):
+    def get_pipeline(self, instance):
+        self.transformer.set_params_from_grid_instance(instance)
+        self.model.set_params_from_grid_instance(instance)
         transformer = self.transformer.get_pipeline()
         model = self.model.get_pipeline()
         pipeline = make_pipeline(transformer, model)

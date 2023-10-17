@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from ..utils import PandasColumnTransformer
 from ..const import NUM_KEY, CAT_KEY, FE_KEY
-from ..grid import BaseGrid
+from ..grid import GridInstance, KEYS
 
 
 class BaseTransformPipeline:
@@ -48,10 +48,12 @@ class BaseTransformPipeline:
     def set_params(self, params):
         self.enc_pipeline.set_params(params)
     
-    def set_params_from_grid(self, grid: BaseGrid):
-        for key in grid.KEYS:
-            key_grid = grid.get_grid_by_key(key)
-            self.get_pipeline_by_key(key).set_params(key_grid)
+    def set_params_from_grid_instance(self, instance: GridInstance):
+        for key in KEYS:
+            key_grid = instance.get_by_key(key)
+            key_pipeline = self.get_pipeline_by_key(key)
+            if key_pipeline and key_grid:
+                key_pipeline.set_params(**key_grid)
 
 
 class TextTransformPipeline(BaseTransformPipeline):
